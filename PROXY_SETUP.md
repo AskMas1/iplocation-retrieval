@@ -76,7 +76,16 @@ app.use('/api/ip-location', createProxyMiddleware({
 }));
 ```
 
-### Option 4: Cloudflare Workers
+### Option 4: Vercel Serverless Functions (Recommended)
+For Vercel deployments, the project includes a serverless function at `api/ip-location.js` that handles the proxy automatically. The `vercel.json` configuration file ensures proper routing and CORS headers.
+
+**Files included:**
+- `api/ip-location.js` - Serverless function that proxies requests to IP-API
+- `vercel.json` - Vercel configuration for routing and headers
+
+**No additional setup required** - just deploy to Vercel and the proxy will work automatically.
+
+### Option 5: Cloudflare Workers
 Create a Cloudflare Worker with this code:
 
 ```javascript
