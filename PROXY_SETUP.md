@@ -132,8 +132,48 @@ If proxy setup is not feasible, consider these alternatives:
 2. **Backend API**: Create your own backend endpoint that fetches IP data
 3. **CORS Proxy Services**: Use public CORS proxy services (not recommended for production)
 
+## Important: User IP Address Forwarding
+
+### The Problem
+When using a proxy server, the IP-API service sees the request coming from your server's IP address instead of the user's actual IP address. This results in showing the server's location (e.g., AWS data center) rather than the user's location.
+
+### The Solution
+The Vercel serverless function (`api/ip-location.js`) has been enhanced to:
+
+1. **Extract the user's real IP** from request headers:
+   - `x-forwarded-for` (most common)
+   - `x-real-ip` (alternative header)
+   - Connection remote address (fallback)
+
+2. **Query IP-API for the specific user IP**:
+   - Instead of calling `http://ip-api.com/json`
+   - It calls `http://ip-api.com/json/{userIP}`
+
+3. **Handle edge cases**:
+   - Multiple IPs in forwarded headers (takes the first one)
+   - IPv6 addresses and port numbers
+   - Local development IPs (127.0.0.1, ::1)
+
+### For Other Proxy Solutions
+If you're using Nginx, Apache, or other proxy solutions, ensure they forward the user's IP:
+
+**Nginx:**
+```nginx
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+```
+
+**Apache:**
+```apache
+ProxyPreserveHost On
+ProxyPass /api/ip-location http://ip-api.com/json
+ProxyPassReverse /api/ip-location http://ip-api.com/json
+```
+
+Then modify your backend to extract and use the forwarded IP address.
+
 ## Security Considerations
 - The proxy forwards all requests to ip-api.com, ensure this aligns with your security policies
 - Consider rate limiting to prevent abuse
 - Monitor proxy usage and implement logging if needed
-- Be aware that the IP address seen by ip-api.com will be your server's IP, not the client's IP
+- The enhanced solution now correctly forwards the user's IP address to get accurate location data

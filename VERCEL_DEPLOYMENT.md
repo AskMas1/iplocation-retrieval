@@ -5,7 +5,7 @@ This guide explains how to deploy the geolocation app to Vercel with the proxy f
 ## Files Added for Vercel Support
 
 ### 1. `api/ip-location.js`
-Serverless function that acts as a proxy to the IP-API service, resolving mixed content errors in production.
+Serverless function that acts as a proxy to the IP-API service, resolving mixed content errors in production. The function extracts the user's real IP address from request headers and queries the IP-API service for that specific IP, ensuring you get the user's location data instead of the server's location.
 
 ### 2. `vercel.json`
 Configuration file that:
