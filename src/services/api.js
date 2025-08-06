@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 // IP-API for IP-based geolocation (free, no API key required)
-const IP_API_BASE_URL = 'http://ip-api.com/json';
+// Using proxy to avoid mixed content errors when served over HTTPS
+const IP_API_BASE_URL = '/api/ip-location';
 
 // OpenWeatherMap API (free tier - requires API key)
 // You can get a free API key from: https://openweathermap.org/api
